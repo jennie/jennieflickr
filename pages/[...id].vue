@@ -31,7 +31,7 @@
 
 <script setup>
 import { createFaunaClient } from "~/api/faunaClient";
-import { fql } from "fauna"; // Importing fql directly from the fauna package
+import { fql } from "fauna";
 
 const config = useRuntimeConfig();
 const client = createFaunaClient(config.public.faunaSecret);
@@ -40,7 +40,7 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 const photo = ref(null);
-const photoId = route.params.id[0]; // The dynamic segment
+const photoId = route.params.id[0];
 
 const fetchPhotoData = async () => {
   const query = fql`photos.firstWhere(.id == ${photoId})`;

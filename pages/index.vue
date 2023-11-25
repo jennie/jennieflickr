@@ -1,4 +1,10 @@
 <template>
+  <Tags @filterByTag="filterByTag" />
+
+  <Pagination
+    :currentPage="currentPage"
+    :totalPages="totalPages"
+    :changePage="changePage" />
   <div class="gallery">
     <div v-for="photo in photos" :key="photo.id" class="photo">
       <NuxtLink :to="`/${photo.id}`">
@@ -9,10 +15,6 @@
         <p>{{ photo.description }}</p>
       </div>
     </div>
-    <Pagination
-      :currentPage="currentPage"
-      :totalPages="totalPages"
-      :changePage="changePage" />
   </div>
 </template>
 
@@ -21,10 +23,11 @@ import { createFaunaClient } from "~/api/faunaClient";
 import { fql } from "fauna"; // Importing fql directly from the fauna package
 
 const config = useRuntimeConfig();
-console.log(config.public);
 const client = createFaunaClient(config.public.faunaSecret);
 
-const photos = ref([]);
+let photos = ref([]);
+let selectedTag = ref(null);
+
 let after = null;
 let currentPage = ref(1);
 const count = 9;
@@ -36,7 +39,9 @@ totalPages.value = Math.ceil(totalPhotos.data / count);
 
 const fetchPhotos = async () => {
   let query;
-  if (after !== null && count !== null) {
+  if (selectedTag.value !== null) {
+    query = fql`photos.photosByTag(${selectedTag.value})`;
+  } else if (after !== null && count !== null) {
     query = fql`Set.paginate(${after}, ${Number(count)})`;
   } else if (after !== null) {
     query = fql`Set.paginate(${after})`;
@@ -61,7 +66,14 @@ const changePage = (newPage) => {
   fetchPhotos();
 };
 
-onMounted(() => fetchPhotos());
+const filterByTag = (tag) => {
+  selectedTag.value = tag;
+  fetchPhotos();
+};
+
+onMounted(() => {
+  fetchPhotos();
+});
 </script>
 <style>
 body {

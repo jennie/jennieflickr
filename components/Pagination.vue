@@ -33,9 +33,9 @@ export default {
 
 <style scoped>
 .pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
+  @apply my-4 flex justify-center items-center gap-4;
+  button {
+    @apply bg-gray-200 px-4 py-2 rounded-md;
+  }
 }
 </style>
