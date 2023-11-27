@@ -3,7 +3,7 @@
     <img :src="photo.url" :alt="photo.title" />
     <div class="photo-info">
       <h1>{{ photo.name }}</h1>
-      <p>{{ photo.description }}</p>
+      <p v-html="photo.description" />
       <p>
         {{ $dayjs(photo.date_taken).format("MMMM D, YYYY") }}
         <span v-if="photo.address">
@@ -21,9 +21,8 @@
       </div>
       <div id="tags">
         <h2>Tags</h2>
-        <span class="tag" v-for="tag in photo.tags"> {{ tag.tag }}</span>
+        <span class="tag" v-for="tag in photo.tags"> {{ tag }}</span>
       </div>
-      <!-- {{ photo }} -->
     </div>
   </div>
   <div v-else>Loading photo...</div>

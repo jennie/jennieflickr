@@ -3,7 +3,8 @@
     <button
       v-for="tagInfo in tagsWithCounts"
       :key="tagInfo.tag"
-      @click="$emit('filterByTag', tagInfo.tag)"
+      :class="{ active: tagInfo.tag === selectedTag }"
+      @click="$emit('filterByTag', tagInfo.tag, tagInfo.count)"
       class="tag-button">
       {{ tagInfo.tag }} ({{ tagInfo.count }})
     </button>
@@ -11,14 +12,19 @@
 </template>
 
 <script setup>
+let tagsWithCounts = ref([]);
+
+const props = defineProps({
+  tagsWithCounts: Array,
+  selectedTag: String,
+});
+
 import { ref, onMounted } from "vue";
 import { createFaunaClient } from "~/api/faunaClient";
 import { fql } from "fauna";
 
 const config = useRuntimeConfig();
 const client = createFaunaClient(config.public.faunaSecret);
-
-let tagsWithCounts = ref([]);
 
 const fetchTags = async () => {
   try {
@@ -39,5 +45,8 @@ onMounted(fetchTags);
 <style>
 button {
   @apply bg-gray-200 px-4 py-2 rounded-md m-2;
+  &.active {
+    @apply bg-red-400;
+  }
 }
 </style>
